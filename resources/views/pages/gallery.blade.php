@@ -40,9 +40,7 @@
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($wallpapers as $wallpaper)
                 <article class="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 backdrop-blur shadow p-4 flex flex-col gap-4 @if(request('highlight') === (string) $wallpaper->getKey()) ring-2 ring-indigo-500 @endif">
-                    <div class="h-48 rounded-xl bg-gradient-to-br from-slate-800 to-indigo-700 flex items-center justify-center text-white text-2xl font-semibold">
-                        <img src="{{ route('wallpapers.image', $wallpaper) }}" alt="Wallpaper: {{ $wallpaper->title }}">
-                    </div>
+                    <img src="{{ route('wallpapers.image', $wallpaper) }}" alt="Wallpaper: {{ $wallpaper->title }}" class="w-full h-48 object-cover rounded-xl">
                     <div>
                         <p class="text-xs uppercase tracking-[0.3em] text-slate-500">{{ $wallpaper->categoryLabel() }}</p>
                         <h3 class="text-xl font-semibold text-slate-900 dark:text-white">{{ $wallpaper->title }}</h3>
