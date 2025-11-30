@@ -21,9 +21,8 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        $destination = Auth::user()?->isAdmin()
-            ? route('admin.dashboard', absolute: false)
-            : route('gallery', absolute: false);
+        // Redirect to the canonical dashboard route used in tests and flows.
+        $destination = route('dashboard', absolute: false);
 
         $this->redirectIntended(default: $destination, navigate: true);
     }

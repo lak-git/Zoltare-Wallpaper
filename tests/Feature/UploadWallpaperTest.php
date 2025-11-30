@@ -16,10 +16,20 @@ it('allows authenticated users to upload free wallpapers', function () {
 
     $user = User::factory()->create();
 
+    // UploadedFile::fake()->image requires GD. If GD is not available in the
+    // test environment, fall back to creating a fake file with an image
+    // extension. This keeps tests portable across CI and Windows dev boxes.
+    $image = null;
+    if (function_exists('imagecreatetruecolor')) {
+        $image = UploadedFile::fake()->image('aurora.jpg');
+    } else {
+        $image = UploadedFile::fake()->create('aurora.jpg', 150, 'image/jpeg');
+    }
+
     $response = $this->actingAs($user)->post(route('upload.store'), [
         'title' => 'Aurora',
         'category' => 'nature',
-        'image' => UploadedFile::fake()->image('aurora.jpg'),
+        'image' => $image,
     ]);
 
     $response->assertRedirect(route('gallery'));
