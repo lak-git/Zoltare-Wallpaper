@@ -1,48 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Livewire\Volt\Component as VoltComponent;
-
-new class extends VoltComponent
-{
-    public function logout(): void
-    {
-        Auth::guard('web')->logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-
-        $this->redirect('/', navigate: true);
-    }
-}; ?>
-
-<nav class="bg-white dark:bg-slate-900 shadow-sm">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex h-16 items-center justify-between">
-            <div class="flex items-center gap-8">
-                <a href="{{ url('/') }}" class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400" wire:navigate>
-                    Zoltare
-                </a>
-                <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
-                    <a href="{{ url('/') }}" wire:navigate class="hover:text-indigo-500 dark:hover:text-indigo-300">Home</a>
-                    <a href="{{ route('gallery') }}" wire:navigate class="hover:text-indigo-500 dark:hover:text-indigo-300">Gallery</a>
-                    <a href="{{ route('upload.create') }}" wire:navigate class="hover:text-indigo-500 dark:hover:text-indigo-300">Upload</a>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <div class="hidden md:flex items-center gap-2">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="text-sm font-semibold text-slate-600 dark:text-slate-200 hover:text-indigo-500 dark:hover:text-indigo-300">Logout</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
-<?php
-
 use App\Livewire\Actions\Logout;
 use Livewire\Volt\Component;
 
@@ -84,7 +41,7 @@ new class extends Component
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
+                            <div x-data="{{ json_encode(['name' => optional(auth()->user())->name ?? '']) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -132,8 +89,8 @@ new class extends Component
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
-                <div class="font-medium text-sm text-gray-500">{{ auth()->user()->email }}</div>
+                <div class="font-medium text-base text-gray-800 dark:text-gray-200" x-data="{{ json_encode(['name' => optional(auth()->user())->name ?? '']) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
+                <div class="font-medium text-sm text-gray-500">{{ optional(auth()->user())->email ?? '' }}</div>
             </div>
 
             <div class="mt-3 space-y-1">

@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 it('prevents non-admin users from accessing the dashboard', function () {
     $user = User::factory()->create(['role' => 'user']);
 
-    $this->actingAs($user)
+    test()->actingAs($user)
         ->get(route('admin.dashboard'))
         ->assertForbidden();
 });
@@ -16,7 +16,7 @@ it('prevents non-admin users from accessing the dashboard', function () {
 it('allows admins to access the dashboard', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
-    $this->actingAs($admin)
+    test()->actingAs($admin)
         ->get(route('admin.dashboard'))
         ->assertOk()
         ->assertSee('Control center');

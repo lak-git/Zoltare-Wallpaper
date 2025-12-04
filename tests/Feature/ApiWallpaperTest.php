@@ -10,7 +10,7 @@ it('allows access to wallpapers API with bearer token', function () {
     $password = 'password';
     $user = User::factory()->create(["password" => bcrypt($password)]);
 
-    $tokenResponse = $this->postJson('/api/token', [
+    $tokenResponse = test()->postJson('/api/token', [
         'email' => $user->email,
         'password' => $password,
     ]);
@@ -19,7 +19,7 @@ it('allows access to wallpapers API with bearer token', function () {
 
     Wallpaper::factory()->count(3)->create();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = test()->withHeader('Authorization', 'Bearer ' . $token)
         ->getJson('/api/wallpapers');
 
     $response->assertStatus(200)->assertJsonStructure(['data']);

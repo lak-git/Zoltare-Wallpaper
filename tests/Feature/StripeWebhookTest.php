@@ -21,7 +21,7 @@ it('persists purchases from stripe webhook payloads', function () {
         ],
     ];
 
-    $this->withHeader('Stripe-Signature', 'test')
+    test()->withHeader('Stripe-Signature', 'test')
         ->postJson('/api/stripe/webhook', $payload)
         ->assertOk();
 

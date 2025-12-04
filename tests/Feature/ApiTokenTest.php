@@ -9,7 +9,7 @@ it('can obtain a personal access token with valid credentials', function () {
     $password = 'password';
     $user = User::factory()->create(["password" => bcrypt($password)]);
 
-    $response = $this->postJson('/api/token', [
+    $response = test()->postJson('/api/token', [
         'email' => $user->email,
         'password' => $password,
     ]);
