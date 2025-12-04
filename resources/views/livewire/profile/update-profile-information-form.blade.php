@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Arr;
 use Livewire\Volt\Component;
 
 new class extends Component
@@ -29,9 +30,20 @@ new class extends Component
 
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
         ]);
 
+        // Manual uniqueness check (MongoDB friendly)
+        if ($validated['email'] !== $user->email) {
+            $exists = User::where('email', $validated['email'])
+                ->where($user->getKeyName(), '!=', $user->getKey())
+                ->exists();
+
+            if ($exists) {
+                $this->addError('email', 'The email has already been taken.');
+                return;
+            }
+        }
         $user->fill($validated);
 
         if ($user->isDirty('email')) {

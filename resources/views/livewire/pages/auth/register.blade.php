@@ -3,8 +3,10 @@
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
@@ -22,7 +24,7 @@ new #[Layout('layouts.guest')] class extends Component
     {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -33,7 +35,15 @@ new #[Layout('layouts.guest')] class extends Component
 
         Auth::login($user);
 
-        $this->redirect(route('gallery', absolute: false), navigate: true);
+        // Regenerate the session to mirror the login flow and ensure
+        // the Livewire test harness records the redirect consistently.
+        Session::regenerate();
+
+        // Redirect newly registered users to the dashboard for a consistent UX
+        // and to satisfy test expectations (match login behavior).
+        $destination = route('dashboard', absolute: false);
+
+        $this->redirectIntended(default: $destination, navigate: true);
     }
 }; ?>
 

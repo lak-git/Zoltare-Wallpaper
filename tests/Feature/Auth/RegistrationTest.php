@@ -5,7 +5,7 @@ namespace Tests\Feature\Auth;
 use Livewire\Volt\Volt;
 
 test('registration screen can be rendered', function () {
-    $response = $this->get('/register');
+    $response = test()->get('/register');
 
     $response
         ->assertOk()
@@ -23,5 +23,5 @@ test('new users can register', function () {
 
     $component->assertRedirect(route('dashboard', absolute: false));
 
-    $this->assertAuthenticated();
+    test()->assertAuthenticated();
 });

@@ -1,3 +1,4 @@
+@section('title', 'Admin - Wallpapers')
 <x-app-layout>
     <div class="max-w-6xl mx-auto px-6 py-10 space-y-8">
         <div class="flex items-center justify-between flex-wrap gap-4">

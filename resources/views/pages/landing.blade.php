@@ -18,20 +18,6 @@
                     See featured drops
                 </a>
             </div>
-            <dl class="mt-12 grid grid-cols-3 gap-4 text-center">
-                <div class="rounded-2xl bg-white dark:bg-slate-900 px-4 py-5 shadow">
-                    <dt class="text-xs uppercase tracking-wide text-slate-500">Wallpapers</dt>
-                    <dd class="text-2xl font-semibold text-slate-900 dark:text-white">{{ number_format($stats['wallpapers']) }}</dd>
-                </div>
-                <div class="rounded-2xl bg-white dark:bg-slate-900 px-4 py-5 shadow">
-                    <dt class="text-xs uppercase tracking-wide text-slate-500">Artists</dt>
-                    <dd class="text-2xl font-semibold text-slate-900 dark:text-white">{{ number_format($stats['artists']) }}</dd>
-                </div>
-                <div class="rounded-2xl bg-white dark:bg-slate-900 px-4 py-5 shadow">
-                    <dt class="text-xs uppercase tracking-wide text-slate-500">Purchases</dt>
-                    <dd class="text-2xl font-semibold text-slate-900 dark:text-white">{{ number_format($stats['purchases']) }}</dd>
-                </div>
-            </dl>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
             @foreach ($featured as $wallpaper)

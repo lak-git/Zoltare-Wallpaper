@@ -1,3 +1,4 @@
+@section('title', 'Upload')
 <x-app-layout>
     <div class="max-w-3xl mx-auto px-6 py-12 space-y-8">
         <div>

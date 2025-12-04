@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 uses(RefreshDatabase::class);
 
 it('requires authentication to view upload page', function () {
-    $this->get(route('upload.create'))->assertRedirect(route('login'));
+    test()->get(route('upload.create'))->assertRedirect(route('login'));
 });
 
 it('allows authenticated users to upload free wallpapers', function () {
@@ -16,11 +16,12 @@ it('allows authenticated users to upload free wallpapers', function () {
 
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->post(route('upload.store'), [
-        'title' => 'Aurora',
-        'category' => 'nature',
-        'image' => UploadedFile::fake()->image('aurora.jpg'),
-    ]);
+        $response = test()->actingAs($user)->post(route('upload.store'), [
+            'title' => 'Aurora',
+            'category' => 'nature',
+            // Use create() with a jpeg mime so the test doesn't require the GD extension
+            'image' => UploadedFile::fake()->create('aurora.jpg', 100, 'image/jpeg'),
+        ]);
 
     $response->assertRedirect(route('gallery'));
 

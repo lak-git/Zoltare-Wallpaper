@@ -6,9 +6,9 @@ use Livewire\Volt\Volt;
 test('profile page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user);
+    test()->actingAs($user);
 
-    $response = $this->get('/profile');
+    $response = test()->get('/profile');
 
     $response
         ->assertOk()
@@ -20,11 +20,13 @@ test('profile page is displayed', function () {
 test('profile information can be updated', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user);
+    test()->actingAs($user);
+
+    $newEmail = 'test+' . uniqid() . '@example.com';
 
     $component = Volt::test('profile.update-profile-information-form')
         ->set('name', 'Test User')
-        ->set('email', 'test@example.com')
+        ->set('email', $newEmail)
         ->call('updateProfileInformation');
 
     $component
@@ -34,14 +36,14 @@ test('profile information can be updated', function () {
     $user->refresh();
 
     $this->assertSame('Test User', $user->name);
-    $this->assertSame('test@example.com', $user->email);
+    $this->assertSame($newEmail, $user->email);
     $this->assertNull($user->email_verified_at);
 });
 
 test('email verification status is unchanged when the email address is unchanged', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user);
+    test()->actingAs($user);
 
     $component = Volt::test('profile.update-profile-information-form')
         ->set('name', 'Test User')
@@ -58,7 +60,7 @@ test('email verification status is unchanged when the email address is unchanged
 test('user can delete their account', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user);
+    test()->actingAs($user);
 
     $component = Volt::test('profile.delete-user-form')
         ->set('password', 'password')
@@ -68,14 +70,14 @@ test('user can delete their account', function () {
         ->assertHasNoErrors()
         ->assertRedirect('/');
 
-    $this->assertGuest();
+    test()->assertGuest();
     $this->assertNull($user->fresh());
 });
 
 test('correct password must be provided to delete account', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user);
+    test()->actingAs($user);
 
     $component = Volt::test('profile.delete-user-form')
         ->set('password', 'wrong-password')

@@ -90,3 +90,11 @@ php artisan test
 
 The suite seeds canonical data, fakes Stripe when appropriate, and ensures admin
 authorization plus purchase gating behave as expected.
+
+---
+
+## Security
+
+- See `docs/security.md` for a short threat model, mitigations, and operational
+	guidance (HTTPS, token lifecycle, encryption, CSRF/XSS mitigations).
+
