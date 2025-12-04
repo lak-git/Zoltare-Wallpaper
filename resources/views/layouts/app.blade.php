@@ -16,7 +16,7 @@
     </head>
     <body class="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
         <div class="min-h-screen flex flex-col">
-            <livewire:layout.navigation />
+            <x-site-nav />
 
             <main class="flex-1">
                 {{ $slot }}

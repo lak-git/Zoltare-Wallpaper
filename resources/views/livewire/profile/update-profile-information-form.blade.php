@@ -30,10 +30,21 @@ new class extends Component
 
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
         ]);
 
-        $user->fill(Arr::only($validated, ['name', 'email']));
+        // Manual uniqueness check (MongoDB friendly)
+        if ($validated['email'] !== $user->email) {
+            $exists = User::where('email', $validated['email'])
+                ->where($user->getKeyName(), '!=', $user->getKey())
+                ->exists();
+
+            if ($exists) {
+                $this->addError('email', 'The email has already been taken.');
+                return;
+            }
+        }
+        $user->fill($validated);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
