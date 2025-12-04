@@ -1,3 +1,4 @@
+@section('title', 'Admin')
 <x-app-layout>
     <div class="max-w-6xl mx-auto px-6 py-10 space-y-10">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

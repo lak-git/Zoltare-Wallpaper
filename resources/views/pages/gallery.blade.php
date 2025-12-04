@@ -2,6 +2,7 @@
     use Illuminate\Support\Str;
 @endphp
 
+@section('title', 'Gallery')
 <x-app-layout>
     <div class="max-w-6xl mx-auto px-6 py-12 space-y-10">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
