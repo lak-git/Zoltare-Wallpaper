@@ -17,8 +17,25 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
+        
         <!-- Scripts -->
+        <script>
+            (() => {
+                const THEME_KEY = 'zoltare-theme';
+                try {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+                    const storedTheme = localStorage.getItem(THEME_KEY);
+                    const theme = storedTheme || (prefersDark.matches ? 'dark' : 'light');
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                } catch (error) {
+                    console.warn('Theme init failed', error);
+                }
+            })();
+        </script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
