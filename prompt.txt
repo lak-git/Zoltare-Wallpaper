@@ -1,6 +1,0 @@
-When entering the gallery page this error occured. Fix it
-```
-Error
-app\Http\Controllers\GalleryController.php:36
-Object of class MongoDB\Laravel\Query\Builder could not be converted to string
-```
