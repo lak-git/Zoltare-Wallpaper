@@ -7,56 +7,84 @@ use App\Models\Wallpaper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Stripe\StripeClient;
+use Illuminate\Support\Carbon;
+use Illuminate\View\View;
 
 class CheckoutController extends Controller
 {
-    public function __construct(private readonly StripeClient $stripeClient)
+    public function show(Request $request, Wallpaper $wallpaper): RedirectResponse|View
     {
-    }
-
-    public function __invoke(Request $request, Wallpaper $wallpaper): RedirectResponse
-    {
-        abort_if(blank(config('services.stripe.secret')), Response::HTTP_SERVICE_UNAVAILABLE, 'Stripe is not configured.');
-
         abort_if($wallpaper->isFree(), Response::HTTP_BAD_REQUEST, 'Wallpaper is free.');
 
         $user = $request->user();
 
         abort_unless($user, Response::HTTP_FORBIDDEN);
 
-        if (Purchase::where('user_id', (string) $user->getKey())
+        $alreadyOwned = Purchase::where('user_id', (string) $user->getKey())
             ->where('wallpaper_id', (string) $wallpaper->getKey())
             ->where('status', 'paid')
-            ->exists()
-        ) {
+            ->exists();
+
+        if ($alreadyOwned) {
             return redirect()->route('gallery')->with('status', 'You already own this wallpaper.');
         }
 
-        $successUrl = config('services.stripe.success_url') ?? route('checkout.success', [], true);
-        $cancelUrl = config('services.stripe.cancel_url') ?? route('checkout.cancel', [], true);
-
-        $session = $this->stripeClient->checkout->sessions->create([
-            'mode' => 'payment',
-            'success_url' => $successUrl.'?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => $cancelUrl,
-            'customer_email' => $user->email,
-            'metadata' => [
-                'user_id' => (string) $user->getKey(),
-                'wallpaper_id' => (string) $wallpaper->getKey(),
-            ],
-            'line_items' => [[
-                'price_data' => [
-                    'currency' => config('services.stripe.currency', 'usd'),
-                    'product_data' => [
-                        'name' => $wallpaper->title,
-                        'description' => $wallpaper->categoryLabel(),
-                    ],
-                    'unit_amount' => (int) round($wallpaper->price * 100),
-                ],
-                'quantity' => 1,
-            ]],
+        return view('pages.checkout', [
+            'wallpaper' => $wallpaper,
         ]);
+    }
+
+    public function store(Request $request, Wallpaper $wallpaper): RedirectResponse
+    {
+        abort_if($wallpaper->isFree(), Response::HTTP_BAD_REQUEST, 'Wallpaper is free.');
+
+        $user = $request->user();
+
+        abort_unless($user, Response::HTTP_FORBIDDEN);
+
+        $validator = validator($request->all(), [
+            'cardholder_name' => ['required', 'string', 'max:255'],
+            'card_number' => ['required', 'digits:16'],
+            'postal_code' => ['required', 'string', 'max:20'],
+            'card_expiry' => ['required', 'regex:/^\d{2}\/\d{2}$/'],
+            'card_pin' => ['required', 'digits:4'],
+        ]);
+
+        $validator->after(function ($validator) {
+            $expiry = $validator->getData()['card_expiry'] ?? '';
+
+            if (! preg_match('/^(\d{2})\/(\d{2})$/', $expiry, $matches)) {
+                return;
+            }
+
+            [$full, $month, $year] = $matches;
+
+            $month = (int) $month;
+            $year = 2000 + (int) $year;
+
+            if ($month < 1 || $month > 12) {
+                $validator->errors()->add('card_expiry', 'Card expiry month is invalid.');
+                return;
+            }
+
+            $now = Carbon::now();
+            $expiryDate = Carbon::create($year, $month, 1)->endOfMonth();
+
+            if ($expiryDate->lt($now->startOfDay())) {
+                $validator->errors()->add('card_expiry', 'Card is expired.');
+            }
+        });
+
+        $validated = $validator->validate();
+
+        $alreadyOwned = Purchase::where('user_id', (string) $user->getKey())
+            ->where('wallpaper_id', (string) $wallpaper->getKey())
+            ->where('status', 'paid')
+            ->exists();
+
+        if ($alreadyOwned) {
+            return redirect()->route('gallery')->with('status', 'You already own this wallpaper.');
+        }
 
         Purchase::updateOrCreate(
             [
@@ -64,12 +92,11 @@ class CheckoutController extends Controller
                 'wallpaper_id' => (string) $wallpaper->getKey(),
             ],
             [
-                'stripe_session_id' => $session->id,
-                'status' => 'pending',
+                'status' => 'paid',
             ],
         );
 
-        return redirect()->away($session->url);
+        return redirect()->route('checkout.success', ['highlight' => (string) $wallpaper->getKey()]);
     }
 }
 

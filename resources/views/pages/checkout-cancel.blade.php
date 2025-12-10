@@ -7,7 +7,7 @@
         </div>
         <h1 class="text-3xl font-bold">Payment canceled</h1>
         <p class="text-slate-600 dark:text-slate-300">
-            Your Stripe checkout was canceled. Feel free to browse the gallery and try again whenever you’re ready.
+            Your payment was not completed. Feel free to browse the gallery and try again whenever you’re ready.
         </p>
         <a href="{{ route('gallery') }}" class="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 font-semibold text-slate-700 hover:border-indigo-400 hover:text-indigo-500" wire:navigate>
             Back to gallery

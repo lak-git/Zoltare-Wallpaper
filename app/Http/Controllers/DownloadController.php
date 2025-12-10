@@ -27,6 +27,7 @@ class DownloadController extends Controller
             || $wallpaper->uploaded_by === (string) $user->getKey()
             || Purchase::where('user_id', (string) $user->getKey())
                 ->where('wallpaper_id', (string) $wallpaper->getKey())
+                ->where('status', 'paid')
                 ->exists();
 
         abort_unless($hasAccess, Response::HTTP_FORBIDDEN);

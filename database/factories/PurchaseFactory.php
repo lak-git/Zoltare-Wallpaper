@@ -19,7 +19,6 @@ class PurchaseFactory extends Factory
         return [
             'user_id' => User::factory(),
             'wallpaper_id' => Wallpaper::factory(),
-            'stripe_session_id' => 'sess_'.fake()->lexify('????????????'),
             'status' => 'paid',
         ];
     }
