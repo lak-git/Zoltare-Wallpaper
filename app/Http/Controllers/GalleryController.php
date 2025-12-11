@@ -27,6 +27,7 @@ class GalleryController extends Controller
         if ($request->user()) {
             $userPurchases = Purchase::query()
                 ->where('user_id', (string) $request->user()->getKey())
+                ->where('status', 'paid')
                 ->pluck('wallpaper_id');
         }
 

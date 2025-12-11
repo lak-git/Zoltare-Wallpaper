@@ -1,11 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\StripeWebhookController;
 use App\Http\Controllers\Api\AuthTokenController;
 use App\Http\Controllers\Api\WallpaperApiController;
 use Illuminate\Support\Facades\Route;
-
-Route::post('stripe/webhook', StripeWebhookController::class);
 
 // Token issuance for personal access tokens (Sanctum)
 Route::post('token', [AuthTokenController::class, 'store']);

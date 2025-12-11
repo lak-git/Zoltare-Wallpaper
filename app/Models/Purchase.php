@@ -15,7 +15,6 @@ class Purchase extends Model
     protected $fillable = [
         'user_id',
         'wallpaper_id',
-        'stripe_session_id',
         'status',
     ];
 

@@ -1,31 +1,18 @@
 <?php
 
-use App\Models\Purchase;
+use App\Models\User;
+use App\Models\Wallpaper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-it('persists purchases from stripe webhook payloads', function () {
-    config(['services.stripe.webhook_secret' => 'whsec_test']);
+it('shows the checkout form for paid wallpapers', function () {
+    $user = User::factory()->create();
+    $wallpaper = Wallpaper::factory()->create(['price' => 7.25]);
 
-    $payload = [
-        'type' => 'checkout.session.completed',
-        'data' => [
-            'object' => [
-                'id' => 'cs_test_123',
-                'metadata' => [
-                    'user_id' => 'user123',
-                    'wallpaper_id' => 'wallpaper456',
-                ],
-            ],
-        ],
-    ];
-
-    test()->withHeader('Stripe-Signature', 'test')
-        ->postJson('/api/stripe/webhook', $payload)
-        ->assertOk();
-
-    expect(Purchase::where('user_id', 'user123')->where('wallpaper_id', 'wallpaper456')->where('status', 'paid')->exists())
-        ->toBeTrue();
+    test()->actingAs($user)
+        ->get(route('checkout.show', $wallpaper))
+        ->assertOk()
+        ->assertSee('Complete your purchase');
 });
 

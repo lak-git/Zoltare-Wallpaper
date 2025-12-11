@@ -32,9 +32,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/upload', [UploadController::class, 'create'])->name('upload.create');
     Route::post('/upload', [UploadController::class, 'store'])->name('upload.store');
 
-    Route::post('/checkout/{wallpaper}', CheckoutController::class)->name('checkout.start');
     Route::get('/checkout/success', fn () => view('pages.checkout-success'))->name('checkout.success');
     Route::get('/checkout/cancel', fn () => view('pages.checkout-cancel'))->name('checkout.cancel');
+    Route::get('/checkout/{wallpaper}', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout/{wallpaper}', [CheckoutController::class, 'store'])->name('checkout.store');
 
     Route::post('logout', function (Request $request) {
         Auth::guard('web')->logout();

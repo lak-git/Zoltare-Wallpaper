@@ -7,9 +7,9 @@
         </div>
         <h1 class="text-3xl font-bold">Payment successful</h1>
         <p class="text-slate-600 dark:text-slate-300">
-            Stripe confirmed your payment. You can download your wallpaper from the gallery immediately.
+            Your payment details were submitted. You can download your wallpaper from the gallery immediately.
         </p>
-        <a href="{{ route('gallery') }}" class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3 text-white font-semibold hover:bg-indigo-500" wire:navigate>
+        <a href="{{ route('gallery', ['highlight' => request('highlight')]) }}" class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3 text-white font-semibold hover:bg-indigo-500" wire:navigate>
             Return to gallery
         </a>
     </div>
