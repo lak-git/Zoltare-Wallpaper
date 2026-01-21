@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,8 +24,15 @@ class AppServiceProvider extends ServiceProvider
         if (! is_dir($wallpaperPath)) {
             mkdir($wallpaperPath, 0755, true);
         }
-        if ($this->app->environment('production')) {
-        \Illuminate\Support\Facades\URL::forceScheme('https');
+
+        if ($this->app->environment('production') && ! $this->app->runningInConsole()) {
+            // Ensure generated URLs (including Livewire assets) use the deployed host instead of localhost.
+            $appUrl = config('app.url');
+            if (empty($appUrl) || str_contains($appUrl, 'localhost')) {
+                URL::forceRootUrl(request()->getSchemeAndHttpHost());
+            }
+
+            URL::forceScheme('https');
         }
     }
 }
