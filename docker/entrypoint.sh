@@ -13,6 +13,7 @@ chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache |
 
 # Ensure framework caches and symlink are in place; do not fail the container if optional
 php artisan storage:link --ansi || true
+php artisan package:discover --ansi || true
 php artisan config:cache --ansi || true
 php artisan route:cache --ansi || true
 php artisan view:cache --ansi || true
