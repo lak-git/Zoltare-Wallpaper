@@ -23,5 +23,8 @@ class AppServiceProvider extends ServiceProvider
         if (! is_dir($wallpaperPath)) {
             mkdir($wallpaperPath, 0755, true);
         }
+        if ($this->app->environment('production')) {
+        \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }
