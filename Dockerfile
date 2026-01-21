@@ -29,7 +29,7 @@ RUN npm run build
 
 FROM php:${PHP_VERSION}-fpm-bullseye AS runtime
 
-ENV PORT=8080 \
+ENV PORT=9000 \
     APP_ENV=production \
     APP_DEBUG=false
 
