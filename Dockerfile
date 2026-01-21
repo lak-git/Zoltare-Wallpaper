@@ -5,6 +5,11 @@ ARG PHP_VERSION=8.2
 
 FROM composer:2 AS composer
 WORKDIR /var/www/html
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libssl-dev pkg-config \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb \
+    && rm -rf /var/lib/apt/lists/*
 COPY composer.json composer.lock* ./
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
