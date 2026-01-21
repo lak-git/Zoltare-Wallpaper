@@ -3,10 +3,13 @@
 ARG NODE_VERSION=20
 ARG PHP_VERSION=8.2
 
-FROM composer:2 AS composer
+FROM composer:2 AS composer-bin
+
+FROM php:${PHP_VERSION}-cli-bullseye AS composer
+COPY --from=composer-bin /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libssl-dev pkg-config \
+    && apt-get install -y --no-install-recommends git unzip libssl-dev pkg-config \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb \
     && rm -rf /var/lib/apt/lists/*
