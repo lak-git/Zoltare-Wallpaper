@@ -12,6 +12,12 @@ server {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
+    # Allow Livewire's dynamically served assets (e.g. /livewire/livewire.js)
+    # to be handled by PHP instead of being treated as missing static files.
+    location ^~ /livewire/ {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
     location ~ \.php$ {
         include fastcgi_params;
         fastcgi_pass 127.0.0.1:9000;
@@ -21,6 +27,7 @@ server {
     }
 
     location ~* \.(jpg|jpeg|gif|png|css|js|ico|woff2?|ttf|svg)$ {
+        try_files $uri $uri/ /index.php?$query_string;
         expires max;
         log_not_found off;
     }

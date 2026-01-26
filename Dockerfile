@@ -8,13 +8,13 @@ FROM composer:2 AS composer-bin
 FROM php:${PHP_VERSION}-cli-bullseye AS composer
 COPY --from=composer-bin /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
-ARG COMPOSER_INSTALL_FLAGS="--no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts"
+ARG COMPOSER_INSTALL_FLAGS="--no-dev --no-interaction --prefer-dist --optimize-autoloader"
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git unzip libssl-dev pkg-config \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb \
     && rm -rf /var/lib/apt/lists/*
-COPY composer.json composer.lock* ./
+COPY . .
 RUN composer install ${COMPOSER_INSTALL_FLAGS}
 
 FROM node:${NODE_VERSION} AS frontend
