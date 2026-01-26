@@ -8,8 +8,10 @@ envsubst '$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/d
 
 # Ensure cache directories exist and have sane permissions before running artisan
 mkdir -p /var/www/html/storage/framework/cache /var/www/html/storage/framework/sessions \
-	/var/www/html/storage/framework/views /var/www/html/bootstrap/cache
+	/var/www/html/storage/framework/views /var/www/html/bootstrap/cache \
+	/var/www/html/storage/app/wallpapers
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
+chmod -R ug+rwX /var/www/html/storage /var/www/html/bootstrap/cache || true
 
 # Ensure framework caches and symlink are in place; do not fail the container if optional
 php artisan storage:link --ansi || true
