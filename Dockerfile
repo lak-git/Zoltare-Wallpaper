@@ -58,6 +58,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-enable mongodb \
     && rm -rf /var/lib/apt/lists/*
 
+# Align PHP upload limits with Nginx for image uploads
+RUN { \
+    echo "upload_max_filesize=25M"; \
+    echo "post_max_size=25M"; \
+    echo "memory_limit=256M"; \
+    echo "max_execution_time=120"; \
+} > /usr/local/etc/php/conf.d/uploads.ini
+
 WORKDIR /var/www/html
 
 COPY --from=composer /var/www/html/vendor ./vendor

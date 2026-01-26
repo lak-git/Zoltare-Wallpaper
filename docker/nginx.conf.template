@@ -2,6 +2,9 @@ server {
     listen ${PORT};
     server_name _;
 
+    # Increase payload limit for image uploads (default is 1M)
+    client_max_body_size 25M;
+
     root /var/www/html/public;
     index index.php index.html;
 
