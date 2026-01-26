@@ -15,7 +15,9 @@ RUN apt-get update \
     && docker-php-ext-enable mongodb \
     && rm -rf /var/lib/apt/lists/*
 COPY . .
-RUN composer install ${COMPOSER_INSTALL_FLAGS}
+# Ensure Laravel cache directories exist before Composer runs scripts that call Artisan
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache \
+    && composer install ${COMPOSER_INSTALL_FLAGS}
 
 FROM node:${NODE_VERSION} AS frontend
 WORKDIR /app
